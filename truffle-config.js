@@ -17,8 +17,19 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
+ require('dotenv').config();
+ const HDWalletProvider = require('@truffle/hdwallet-provider');
+ const privateKeys = process.env.PRIVATE_KEYS || ""
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const provider = new HDWalletProvider({
+  privateKeys: [privateKeys],
+  providerOrUrl: 'https://data-seed-prebsc-1-s3.binance.org:8545/'
+});
+
+const providerBSC = new HDWalletProvider({
+  privateKeys: [privateKeys],
+  providerOrUrl: 'https://bsc-dataseed1.ninicoin.io/'
+});
 // const infuraKey = "fj4jll3k.....";
 //
 // const fs = require('fs');
@@ -36,6 +47,29 @@ module.exports = {
    */
 
   networks: {
+    development: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: "*" // Match any network id
+    },
+    bsc_testnet: {
+      provider: () => provider,
+      network_id: 97,
+      gas: 4600000,
+      gasLimit: 9010204,
+      gasPrice: 40000000050,
+      // confirmations: 10,
+      // timeoutBlocks: 200,
+      // skipDryRun: true
+    },
+    bsc_mainnet: {
+      provider: () => providerBSC,
+      network_id: 56,
+      confirmations: 10,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+      gas: 4712388,
+    }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
@@ -83,10 +117,10 @@ module.exports = {
   compilers: {
     solc: {
       version: ">=0.5.0 <0.9.0",    // Fetch exact version from solc-bin (default: truffle's version)
-      docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
+      // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       settings: {          // See the solidity docs for advice about optimization and evmVersion
        optimizer: {
-         enabled: false,
+         enabled: true,
          runs: 200
        },
       //  evmVersion: "byzantium"
